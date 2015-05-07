@@ -1,0 +1,10 @@
+- pattern: foo*.mp3
+  album: The Foo Album
+  artist: Footallica
+  tracks: 10
+  genre: Hip hop
+  year: 1907
+
+- file: foo03.mp3
+  title: Foo The Never
+  track: 3
