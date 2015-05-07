@@ -57,6 +57,47 @@ class TagDefinitions:
             data = {}
         self.data = data
 
+frames2labels = {
+    'TIT2' : 'title',
+    'TPE1' : 'artist',
+    'TALB' : 'album',
+    'TRCK' : 'track',
+    'TYER' : 'year',
+    'TCON' : 'genre',
+    'COMM' : 'comment'
+}
+
+labels2frames = dict((value, key) for key, value in frames2labels.items())
+
+class MediaFile:
+    def __init__(self, path):
+        self.path = path
+        with open(path) as handle:
+            self.id3 = id3parse.ID3.from_file(path)
+            
+    def __repr__(self):
+        return '{}({})'.format(self.__class__.__name__, self.path)
+
+    def update(self, **tags):
+        changed = False
+        for name, value in tags.items():
+            frame_name = labels2frames[name]
+            try:
+                frame = self.id3.find_frame_by_name(frame_name)
+            except ValueError:
+                new_frame = id3parse.ID3TextFrame.from_scratch(frame_name, value)
+                self.id3.add_frame(new_frame)
+                changed = True
+                continue
+            if frame.text != value:
+                frame.text = value
+                changed = True
+        if changed:
+            self.id3.to_file()
+
 if __name__ == '__main__':
     args = get_args()
-    mediafiles = TagDefinitions.from_config_file(args.config)
+    tagdefs = TagDefinitions.from_config_file(args.config)
+    for path, tags in tagdefs.files().items():
+        mediafile = MediaFile(path)
+        mediafile.update(**tags)
