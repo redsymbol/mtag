@@ -15,7 +15,7 @@ def get_args():
                         help='YAML config file')
     return parser.parse_args()
 
-class MediaFiles:
+class TagDefinitions:
     @classmethod
     def from_config_file(cls, path):
         with open(path) as config:
@@ -59,4 +59,4 @@ class MediaFiles:
 
 if __name__ == '__main__':
     args = get_args()
-    mediafiles = MediaFiles.from_config_file(args.config)
+    mediafiles = TagDefinitions.from_config_file(args.config)
