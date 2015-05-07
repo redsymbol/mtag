@@ -24,13 +24,15 @@ class MediaFiles:
 
     @property
     def patterns(self):
-        return list(item for item in self.data
-                    if 'pattern' in item)
+        for item in self.data:
+            if 'pattern' in item:
+                yield dict(item)
 
     @property
     def explicit_files(self):
-        return list(item for item in self.data
-                    if 'file' in item)
+        for item in self.data:
+            if 'file' in item:
+                yield dict(item)
 
     def files(self, fetch_files_by_pattern = glob.iglob):
         media_files = dict()
