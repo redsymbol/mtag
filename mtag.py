@@ -19,6 +19,16 @@ def get_args():
                         help='Be more silent in output')
     return parser.parse_args()
 
+def dict_str_values(d):
+    '''
+    Clone dictionary, casting all values to type string.
+    '''
+    dsv = dict(d)
+    for k, v in dsv.items():
+        if type(v) != str:
+            dsv[k] = str(v)
+    return dsv
+
 class TagDefinitions:
     @classmethod
     def from_config_file(cls, path):
@@ -30,21 +40,15 @@ class TagDefinitions:
     def patterns(self):
         for item in self.data:
             if 'pattern' in item:
-                data = dict(item)
-                for k, v in data.items():
-                    if type(v) != str:
-                        data[k] = str(v)
-                yield data
+                assert 'file' not in item, item
+                yield dict_str_values(item)
 
     @property
     def explicit_files(self):
         for item in self.data:
             if 'file' in item:
-                data = dict(item)
-                for k, v in data.items():
-                    if type(v) != str:
-                        data[k] = str(v)
-                yield data
+                assert 'pattern' not in item, item
+                yield dict_str_values(item)
 
     def files(self, fetch_files_by_pattern = glob.iglob):
         media_files = dict()
