@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
 import argparse
+import collections
+import glob
+
 import yaml
 import id3parse
-import glob
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -69,6 +71,7 @@ frames2labels = {
 
 labels2frames = dict((value, key) for key, value in frames2labels.items())
 
+
 class MediaFile:
     def __init__(self, path):
         self.path = path
@@ -80,8 +83,24 @@ class MediaFile:
 
     def update(self, **tags):
         changed = False
-        for name, value in tags.items():
+        if 'tracks' in tags:
+            tracks = str(tags['tracks'])
+            del tags['tracks']
+        else:
+            tracks = None
+        def convert_track(value):
             value = str(value)
+            if (tracks is not None) and ('/' not in value):
+                value += '/' + tracks
+            return value
+        def identity(x): return x
+        converters = collections.defaultdict(lambda: identity)
+        converters.update({
+            'year' : str,
+            'track' : convert_track,
+               })
+        for name, value in tags.items():
+            value = converters[name](value)
             frame_name = labels2frames[name]
             try:
                 frame = self.id3.find_frame_by_name(frame_name)

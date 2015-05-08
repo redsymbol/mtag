@@ -43,7 +43,7 @@ class TestIntegration(unittest.TestCase):
         self.assertEqual('Neverending Story Soundtrack', album)
         # track field (TRCK)
         track = id3.find_frame_by_name('TRCK').text
-        self.assertEqual('3', track)
+        self.assertEqual('3/7', track)
         # year field (TYER)
         year = id3.find_frame_by_name('TYER').text
         self.assertEqual('1999', year)
