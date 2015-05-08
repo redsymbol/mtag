@@ -71,6 +71,11 @@ frames2labels = {
 
 labels2frames = dict((value, key) for key, value in frames2labels.items())
 
+def convert_track(value, tracks):
+    value = str(value)
+    if (tracks is not None) and ('/' not in value):
+        value += '/' + tracks
+    return value
 
 class MediaFile:
     def __init__(self, path):
@@ -88,19 +93,11 @@ class MediaFile:
             del tags['tracks']
         else:
             tracks = None
-        def convert_track(value):
-            value = str(value)
-            if (tracks is not None) and ('/' not in value):
-                value += '/' + tracks
-            return value
-        def identity(x): return x
-        converters = collections.defaultdict(lambda: identity)
-        converters.update({
-            'year' : str,
-            'track' : convert_track,
-               })
         for name, value in tags.items():
-            value = converters[name](value)
+            if name == 'track':
+                value = convert_track(value, tracks)
+            elif name == 'year':
+                value = str(value)
             frame_name = labels2frames[name]
             try:
                 frame = self.id3.find_frame_by_name(frame_name)
