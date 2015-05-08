@@ -24,12 +24,11 @@ class TestTagDefinitions(unittest.TestCase):
         files = mfiles.files(fetch_files_by_pattern=mk_iglob())
         expected = {
             'foo03.mp3' : {'title': 'Foo The Never',
-                           'track': 3,
+                           'track': '3/10',
                            'album': 'The Foo Album',
                            'artist': 'Footallica',
-                           'tracks': 10,
                            'genre': 'Hip hop',
-                           'year': 1907,
+                           'year': '1907',
             },
         }
         self.assertEqual(expected, files)
@@ -40,12 +39,11 @@ class TestTagDefinitions(unittest.TestCase):
         files = mfiles.files(fetch_files_by_pattern=iglob)
         expected = {
             'foo03.mp3' : {'title': 'Foo The Never',
-                           'track': 3,
+                           'track': '3/10',
                            'album': 'The Foo Album',
                            'artist': 'Footallica',
-                           'tracks': 10,
                            'genre': 'Hip hop',
-                           'year': 1907,
+                           'year': '1907',
             },
         }
         self.assertEqual(expected, files)
@@ -56,18 +54,16 @@ class TestTagDefinitions(unittest.TestCase):
         files = mfiles.files(fetch_files_by_pattern=iglob)
         expected = {
             'foo03.mp3' : {'title': 'Foo The Never',
-                           'track': 3,
+                           'track': '3/10',
                            'album': 'The Foo Album',
                            'artist': 'Footallica',
-                           'tracks': 10,
                            'genre': 'Hip hop',
-                           'year': 1907,
+                           'year': '1907',
             },
             'foo07.mp3' : {'album': 'The Foo Album',
                            'artist': 'Footallica',
-                           'tracks': 10,
                            'genre': 'Hip hop',
-                           'year': 1907,
+                           'year': '1907',
             },
         }
         self.assertEqual(expected, files)
@@ -78,20 +74,41 @@ class TestTagDefinitions(unittest.TestCase):
         files = mfiles.files(fetch_files_by_pattern=iglob)
         expected = {
             'foo03.mp3' : {'title': 'Foo The Never',
-                           'track': 3,
+                           'track': '3/10',
                            'album': 'The Foo Album',
                            'artist': 'Footallica',
-                           'tracks': 10,
                            'genre': 'Hip hop',
-                           'year': 1907,
+                           'year': '1907',
             },
             'foo07.mp3' : {'title': 'Fade to Foo',
-                           'track': 7,
+                           'track': '7/10',
                            'album': 'The Foo Album',
                            'artist': 'Footallica',
-                           'tracks': 10,
                            'genre': 'Hip hop',
-                           'year': 1907,
+                           'year': '1907',
+            },
+        }
+        self.assertEqual(expected, files)
+
+    maxDiff = None
+    def test_fully_auto_tracks(self):
+        mfiles = mtag.TagDefinitions.from_config_file('test/data/d.yml')
+        iglob = mk_iglob({'foo*.mp3' : ['foo03.mp3', 'foo07.mp3']})
+        files = mfiles.files(fetch_files_by_pattern=iglob)
+        expected = {
+            'foo03.mp3' : {'title': 'Foo The Never',
+                           'track': '1/2',
+                           'album': 'The Foo Album',
+                           'artist': 'Footallica',
+                           'genre': 'Hip hop',
+                           'year': '1907',
+            },
+            'foo07.mp3' : {'title': 'Fade to Foo',
+                           'track': '2/2',
+                           'album': 'The Foo Album',
+                           'artist': 'Footallica',
+                           'genre': 'Hip hop',
+                           'year': '1907',
             },
         }
         self.assertEqual(expected, files)
