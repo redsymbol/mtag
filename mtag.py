@@ -15,6 +15,8 @@ def get_args():
         )
     parser.add_argument('config',
                         help='YAML config file')
+    parser.add_argument('--progress', action='store_true', default=False,
+                        help='Show progress by file')
     return parser.parse_args()
 
 class TagDefinitions:
@@ -150,5 +152,7 @@ if __name__ == '__main__':
     args = get_args()
     tagdefs = TagDefinitions.from_config_file(args.config)
     for path, tags in tagdefs.files().items():
+        if args.progress:
+            print('Processing: ' + path)
         mediafile = MediaFile(path)
         mediafile.update(**tags)
