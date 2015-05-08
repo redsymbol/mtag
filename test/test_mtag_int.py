@@ -41,4 +41,12 @@ class TestIntegration(unittest.TestCase):
         # album field (TALB)
         album = id3.find_frame_by_name('TALB').text
         self.assertEqual('Neverending Story Soundtrack', album)
-        
+        # track field (TRCK)
+        track = id3.find_frame_by_name('TRCK').text
+        self.assertEqual('3', track)
+        # year field (TYER)
+        year = id3.find_frame_by_name('TYER').text
+        self.assertEqual('1999', year)
+        # genre field (TCON)
+        genre = id3.find_frame_by_name('TCON').text
+        self.assertEqual('Alternative', genre)

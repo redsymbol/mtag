@@ -64,7 +64,7 @@ frames2labels = {
     'TRCK' : 'track',
     'TYER' : 'year',
     'TCON' : 'genre',
-    'COMM' : 'comment'
+    #'COMM' : 'comment'
 }
 
 labels2frames = dict((value, key) for key, value in frames2labels.items())
@@ -81,6 +81,7 @@ class MediaFile:
     def update(self, **tags):
         changed = False
         for name, value in tags.items():
+            value = str(value)
             frame_name = labels2frames[name]
             try:
                 frame = self.id3.find_frame_by_name(frame_name)
