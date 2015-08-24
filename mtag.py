@@ -50,54 +50,60 @@ class TagDefinitions:
                 assert 'pattern' not in item, item
                 yield dict_str_values(item)
 
-    def files(self, fetch_files_by_pattern = glob.iglob):
-        media_files = dict()
-        for pattern_info in self.patterns:
-            tracks = None
-            pattern_file_info = {}
-            for key, value in pattern_info.items():
-                if key == 'tracks':
-                    tracks = value
-                elif key == 'pattern':
-                    pattern = value
-                else:
-                    # will copy to file
-                    pattern_file_info[key] = value
-            for index, path in enumerate(fetch_files_by_pattern(pattern), 1):
-                if path not in media_files:
-                    media_files[path] = dict()
-                media_files[path].update(pattern_file_info)
-                if tracks == 'auto':
-                    # This assumes only one pattern matching all files.
-                    # Will need to do a little more work to properly support multiple patterns.
-                    media_files[path]['auto_track_index'] = index
-                elif tracks is not None:
-                    media_files[path]['tracks'] = tracks
-        for file_info in self.explicit_files:
-            path = file_info['file']
-            del file_info['file']
-            if path not in media_files:
-                media_files[path] = dict()
-            media_files[path].update(file_info)
-        have_auto_track = [file_info for file_info in media_files.values()
-                           if 'auto_track_index' in file_info]
-        for file_info in have_auto_track:
-            file_info['track'] = '{}/{}'.format(file_info['auto_track_index'], len(have_auto_track))
-            del file_info['auto_track_index']
-        inherit_tracks = [file_info for file_info in media_files.values()
-                          if 'tracks' in file_info]
-        for file_info in inherit_tracks:
-            tracks = file_info['tracks']
-            del file_info['tracks']
-            if 'track' in file_info and '/' not in file_info['track']:
-                file_info['track'] += '/' + tracks
-        return media_files
+    def files(self):
+        return find_files(self.patterns, self.explicit_files)
 
-    # private ctor
     def __init__(self, data=None):
+        '''
+        Semi-private constructor. Normally use one of the factory class methods instead.
+        '''
         if data is None:
             data = {}
         self.data = data
+
+def find_files(patterns, explicit_files, files_by_glob_pattern = glob.iglob):
+    media_files = dict()
+    for pattern_info in patterns:
+        tracks = None
+        pattern_file_info = {}
+        for key, value in pattern_info.items():
+            if key == 'tracks':
+                tracks = value
+            elif key == 'pattern':
+                pattern = value
+            else:
+                # will copy to file
+                pattern_file_info[key] = value
+        for index, path in enumerate(files_by_glob_pattern(pattern), 1):
+            if path not in media_files:
+                media_files[path] = dict()
+            media_files[path].update(pattern_file_info)
+            if tracks == 'auto':
+                # This assumes only one pattern matching all files.
+                # Will need to do a little more work to properly support multiple patterns.
+                media_files[path]['auto_track_index'] = index
+            elif tracks is not None:
+                media_files[path]['tracks'] = tracks
+    for file_info in explicit_files:
+        path = file_info['file']
+        del file_info['file']
+        if path not in media_files:
+            media_files[path] = dict()
+        media_files[path].update(file_info)
+    have_auto_track = [file_info for file_info in media_files.values()
+                       if 'auto_track_index' in file_info]
+    for file_info in have_auto_track:
+        file_info['track'] = '{}/{}'.format(file_info['auto_track_index'], len(have_auto_track))
+        del file_info['auto_track_index']
+    inherit_tracks = [file_info for file_info in media_files.values()
+                      if 'tracks' in file_info]
+    for file_info in inherit_tracks:
+        tracks = file_info['tracks']
+        del file_info['tracks']
+        if 'track' in file_info and '/' not in file_info['track']:
+            file_info['track'] += '/' + tracks
+    return media_files
+
 
 frames2labels = {
     'TIT2' : 'title',
