@@ -29,37 +29,46 @@ def dict_str_values(d):
             dsv[k] = str(v)
     return dsv
 
-class TagDefinitions:
-    @classmethod
-    def from_config_file(cls, path):
-        with open(path) as config:
-            data = yaml.load(config)
-            return cls(data)
-
+class PatternsAndFiles:
+    def __init__(self, yaml_data):
+        self.data = yaml_data
     @property
     def patterns(self):
         for item in self.data:
             if 'pattern' in item:
                 assert 'file' not in item, item
                 yield dict_str_values(item)
-
     @property
     def explicit_files(self):
         for item in self.data:
             if 'file' in item:
                 assert 'pattern' not in item, item
                 yield dict_str_values(item)
+        
+        
+
+class TagDefinitions:
+    @classmethod
+    def from_config_file(cls, path):
+        with open(path) as config:
+            return cls(yaml.load(config))
+
+    @property
+    def patterns(self):
+        return self.patterns_and_files.patterns
+
+    @property
+    def explicit_files(self):
+        return self.patterns_and_files.explicit_files
 
     def files(self):
         return find_files(self.patterns, self.explicit_files)
 
-    def __init__(self, data=None):
+    def __init__(self, data):
         '''
         Semi-private constructor. Normally use one of the factory class methods instead.
         '''
-        if data is None:
-            data = {}
-        self.data = data
+        self.patterns_and_files = PatternsAndFiles(data)
 
 def find_files(patterns, explicit_files, files_by_glob_pattern = glob.iglob):
     media_files = dict()
