@@ -45,8 +45,6 @@ class Config:
                 assert 'pattern' not in item, item
                 yield dict_str_values(item)
         
-        
-
 class TagDefinitions:
     @classmethod
     def from_config_file(cls, path):
@@ -113,7 +111,6 @@ def find_files(patterns, explicit_files, files_by_glob_pattern = glob.iglob):
             file_info['track'] += '/' + tracks
     return media_files
 
-
 frames2labels = {
     'TIT2' : 'title',
     'TPE1' : 'artist',
@@ -121,7 +118,7 @@ frames2labels = {
     'TRCK' : 'track',
     'TYER' : 'year',
     'TCON' : 'genre',
-    #'COMM' : 'comment'
+    #'COMM' : 'comment' # TODO: someday...
 }
 
 labels2frames = dict((value, key) for key, value in frames2labels.items())
