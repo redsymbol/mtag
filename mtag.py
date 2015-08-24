@@ -29,7 +29,7 @@ def dict_str_values(d):
             dsv[k] = str(v)
     return dsv
 
-class PatternsAndFiles:
+class Config:
     def __init__(self, yaml_data):
         self.data = yaml_data
     @property
@@ -55,11 +55,11 @@ class TagDefinitions:
 
     @property
     def patterns(self):
-        return self.patterns_and_files.patterns
+        return self.config.patterns
 
     @property
     def explicit_files(self):
-        return self.patterns_and_files.explicit_files
+        return self.config.explicit_files
 
     def files(self):
         return find_files(self.patterns, self.explicit_files)
@@ -68,7 +68,7 @@ class TagDefinitions:
         '''
         Semi-private constructor. Normally use one of the factory class methods instead.
         '''
-        self.patterns_and_files = PatternsAndFiles(data)
+        self.config = Config(data)
 
 def find_files(patterns, explicit_files, files_by_glob_pattern = glob.iglob):
     media_files = dict()

@@ -2,7 +2,7 @@ import unittest
 import mtag
 import yaml
 
-class TestPatternsAndFiles(unittest.TestCase):
+class TestConfig(unittest.TestCase):
     def test_main(self):
         yaml_data = yaml.load('''
 - pattern: 'stuff*.mp3'
@@ -38,9 +38,9 @@ class TestPatternsAndFiles(unittest.TestCase):
              'title': 'Stuff Forever! Live From Manchester',
              },
             ]
-        patterns_and_files = mtag.PatternsAndFiles(yaml_data)
-        self.assertEqual(expected_patterns, list(patterns_and_files.patterns))
-        self.assertEqual(expected_explicit_files, list(patterns_and_files.explicit_files))
+        config = mtag.Config(yaml_data)
+        self.assertEqual(expected_patterns, list(config.patterns))
+        self.assertEqual(expected_explicit_files, list(config.explicit_files))
         
 
 class TestMTag(unittest.TestCase):
